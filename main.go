@@ -16,7 +16,7 @@ var (
 )
 
 func run() int {
-	log.Println("--- --- ---")
+	log.Println("--- starting ---")
 
 	log.Printf("config file: %v\n", *configFile)
 
@@ -34,9 +34,12 @@ func run() int {
 		log.Panic(err)
 	}
 
+	log.Println("--- completed ---")
+
 	if *servePort != "" {
-		log.Println("serve:", *servePort)
+		log.Println("--- serve:", *servePort, "---")
 		serve.Serve(*servePort)
+		log.Println("--- server stopped ---")
 		return 0
 	}
 
