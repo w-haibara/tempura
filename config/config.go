@@ -2,12 +2,19 @@ package config
 
 import (
 	"encoding/json"
+
+	"github.com/k0kubun/pp"
 )
 
 type Config struct {
-	OutFile  string   `json: "outfile"`
-	Greeting string   `json: "greeting"`
-	Style    []string `json: "style"`
+	OutFile  string    `json: "outfile"`
+	Greeting string    `json: "greeting"`
+	Style    []string  `json: "style"`
+	Commands []Command `json: "commands"`
+}
+
+type Command struct {
+	Command string `json: "command"`
 }
 
 func Configure(data []byte) (Config, error) {
@@ -17,6 +24,8 @@ func Configure(data []byte) (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
+
+	pp.Println(c)
 
 	return c, nil
 }

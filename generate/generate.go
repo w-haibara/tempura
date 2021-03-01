@@ -13,6 +13,7 @@ func Generate(c config.Config) error {
 	f.writeStr(parts.Header1())
 	f.writeStr(parts.Style(c.Style))
 	f.writeStr(parts.Header2())
+	f.writeStr(parts.Commands(c.Commands))
 	f.writeStr(parts.Footer(c.Greeting))
 
 	return nil

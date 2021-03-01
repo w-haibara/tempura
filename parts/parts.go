@@ -1,6 +1,8 @@
 package parts
 
-import ()
+import (
+	"tempura/config"
+)
 
 func Header1() string {
 	return `
@@ -34,6 +36,15 @@ func Header2() string {
 <script>
 $('body').terminal(function(command, term) {
 `
+}
+
+func Commands(c []config.Command) string {
+	str := "	if (false) {\n"
+	for i, _ := range c {
+		str += "	} else if(command === '" + c[i].Command + "') {\n"
+		str += "		term.echo('" + c[i].Command + "');\n"
+	}
+	return str + "	}"
 }
 
 func Footer(greeting string) string {
