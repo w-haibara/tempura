@@ -2,4 +2,8 @@ module tempura
 
 go 1.15
 
-require github.com/skanehira/docui v0.0.0-20210109000509-257f67491146 // indirect
+require (
+	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
+	github.com/k0kubun/pp v3.0.1+incompatible
+	github.com/mattn/go-colorable v0.1.8 // indirect
+)
