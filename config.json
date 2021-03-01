@@ -1,3 +1,4 @@
 {
-	"sample": "waa"
+	"outfile": "out/index.html",
+	"greeting": "this is a greeting message"
 }

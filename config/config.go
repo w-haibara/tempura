@@ -5,7 +5,8 @@ import (
 )
 
 type Config struct {
-	waa string `json: ""`
+	OutFile  string `json: "outfile"`
+	Greeting string `json: "greeting"`
 }
 
 func Configure(data []byte) (Config, error) {
