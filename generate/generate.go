@@ -1,0 +1,53 @@
+package generate
+
+import (
+	//	"fmt"
+	"log"
+	"os"
+	"tempura/config"
+	"tempura/parts"
+)
+
+func Generate(c config.Config) error {
+	f := open("out/index.html")
+	f.writeStr(parts.Header1())
+	f.writeStr(parts.Style())
+	f.writeStr(parts.Header2())
+	f.writeStr(parts.Footer("this is a greeting"))
+
+	return nil
+}
+
+type file struct {
+	*os.File
+}
+
+func open(path string) file {
+	if err := os.WriteFile(path, []byte{}, 0666); err != nil {
+		log.Panic(err)
+	}
+
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return file{f}
+}
+
+func (f file) writeStr(s string) {
+	f.writeBytes([]byte(s))
+}
+
+func (f file) writeBytes(b []byte) {
+	if _, err := f.Write(b); err != nil {
+		f.close()
+		log.Panic(err)
+	}
+}
+
+func (f file) close() {
+	if err := f.Close(); err != nil {
+		log.Panic(err)
+	}
+}
