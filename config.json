@@ -1,4 +1,10 @@
 {
 	"outfile": "out/index.html",
-	"greeting": "this is a greeting message"
+	"greeting": "this is a greeting message",
+	"style": [
+		"--color: #B2EBF2;",
+		"--background: #212121;",
+		"--animation: terminal-underline;",
+		"--size: 1.5;"
+	]
 }

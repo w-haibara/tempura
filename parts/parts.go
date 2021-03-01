@@ -13,17 +13,18 @@ func Header1() string {
 `
 }
 
-func Style() string {
-	return `
+func Style(strs []string) string {
+	str1 := `
 <style>
 .terminal {
-  --color: #B2EBF2;
-  --background: #212121;
-  --animation: terminal-underline;
-  --size: 1.5;
-}
+`
+	str2 := `}
 </style>
 `
+	for _, v := range strs {
+		str1 += v + "\n"
+	}
+	return str1 + str2
 }
 
 func Header2() string {

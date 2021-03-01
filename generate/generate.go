@@ -11,7 +11,7 @@ import (
 func Generate(c config.Config) error {
 	f := open(c.OutFile)
 	f.writeStr(parts.Header1())
-	f.writeStr(parts.Style())
+	f.writeStr(parts.Style(c.Style))
 	f.writeStr(parts.Header2())
 	f.writeStr(parts.Footer(c.Greeting))
 
