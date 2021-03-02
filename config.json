@@ -5,16 +5,29 @@
 		"--color: #B2EBF2;",
 		"--background: #212121;",
 		"--animation: terminal-underline;",
-		"--size: 1.5;"
+		"--size: 3;"
 	],
 	"commands": [
 		{
 			"command": "aaa",
-			"message": "command aaa"
+			"message": "command aaa",
+			"prompts": [
+				{
+					"prompt": "prompt A-1"
+				},
+				{
+					"prompt": "prompt A-2"
+				}
+			]
 		},
 		{
 			"command": "bbb",
-			"message": "command bbb"
+			"message": "command bbb",
+			"prompts": [
+				{
+					"prompt": "prompt B-1"
+				}
+			]
 		}
 	]
 }

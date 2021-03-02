@@ -14,8 +14,13 @@ type Config struct {
 }
 
 type Command struct {
-	Command string `json: "command"`
-	Message string `json: "message"`
+	Command string   `json: "command"`
+	Message string   `json: "message"`
+	Prompts []Prompt `json: "prompts"`
+}
+
+type Prompt struct {
+	Prompt string `json: "prompt"`
 }
 
 func Configure(data []byte) (Config, error) {
