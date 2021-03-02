@@ -9,10 +9,12 @@
 	],
 	"commands": [
 		{
-			"command": "aaa"
+			"command": "aaa",
+			"message": "command aaa"
 		},
 		{
-			"command": "bbb"
+			"command": "bbb",
+			"message": "command bbb"
 		}
 	]
 }

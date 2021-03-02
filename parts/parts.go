@@ -42,9 +42,14 @@ func Commands(c []config.Command) string {
 	str := "	if (false) {\n"
 	for i, _ := range c {
 		str += "	} else if(command === '" + c[i].Command + "') {\n"
-		str += "		term.echo('" + c[i].Command + "');\n"
+		str += Message(c[i])
+		str += Get(c[i])
 	}
 	return str + "	}"
+}
+
+func Message(c config.Command) string {
+	return "		term.echo('" + c.Message + "');\n"
 }
 
 func Footer(greeting string) string {

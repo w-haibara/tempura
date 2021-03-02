@@ -15,6 +15,7 @@ type Config struct {
 
 type Command struct {
 	Command string `json: "command"`
+	Message string `json: "message"`
 }
 
 func Configure(data []byte) (Config, error) {
