@@ -13,10 +13,12 @@
 			"message": "command aaa",
 			"prompts": [
 				{
-					"prompt": "prompt A-1"
+					"prompt": "prompt A-1",
+					"json": "a1"
 				},
 				{
-					"prompt": "prompt A-2"
+					"prompt": "prompt A-2",
+					"json": "a2"
 				}
 			]
 		},
@@ -25,7 +27,8 @@
 			"message": "command bbb",
 			"prompts": [
 				{
-					"prompt": "prompt B-1"
+					"prompt": "prompt B-1",
+					"json": "b1"
 				}
 			]
 		}

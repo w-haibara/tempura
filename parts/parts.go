@@ -64,11 +64,8 @@ func Prompts(c config.Command) string {
 		str += "			if (command) {\n"
 		str += "				var" + strconv.Itoa(j) + " = command;\n"
 		if i == 0 {
-			str += "				term.echo("
-			for i, _ := range c.Prompts {
-				str += "'var" + strconv.Itoa(i) + ":' + var" + strconv.Itoa(i) + " + ' ' + "
-			}
-			str += "'');\n"
+			str += "				var json = " + Json(c.Prompts) + ";\n"
+			str += "				term.echo(json);\n"
 		}
 		str += "				term.pop();\n"
 		str += "			}\n"
@@ -76,6 +73,19 @@ func Prompts(c config.Command) string {
 		str += "			prompt: '" + c.Prompts[j].Prompt + ": '\n"
 		str += "		});\n"
 	}
+	return str
+}
+
+func Json(p []config.Prompt) string {
+	str := `'{' + `
+	for i, _ := range p {
+		str += `'"` + p[i].Json + `": ' + `
+		str +=  `'"' + var` + strconv.Itoa(i) + ` + '"' + `
+		if (i != len(p) - 1) {
+			str += "',' + "
+		}
+	}
+	str += `'}'`
 	return str
 }
 

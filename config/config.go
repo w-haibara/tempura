@@ -21,6 +21,7 @@ type Command struct {
 
 type Prompt struct {
 	Prompt string `json: "prompt"`
+	Json   string `json: "json"`
 }
 
 func Configure(data []byte) (Config, error) {
