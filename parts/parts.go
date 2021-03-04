@@ -49,6 +49,8 @@ func Commands(c []config.Command) string {
 		str += Message(c[i])
 		str += Prompts(c[i])
 	}
+	str += "	} else if(command !== '') {\n"
+	str += "		 term.echo(command + ': command not found')\n"
 	return str + "	}"
 }
 
