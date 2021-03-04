@@ -9,29 +9,40 @@
 	],
 	"commands": [
 		{
-			"command": "aaa",
-			"message": "command aaa",
+			"command": "json",
+			"message": "json sample",
 			"prompts": [
 				{
-					"prompt": "prompt A-1",
+					"prompt": "tag A-1",
 					"json": "a1"
 				},
 				{
-					"prompt": "prompt A-2",
-					"mask": true,
+					"prompt": "tag A-2",
 					"json": "a2"
 				}
-			]
+			],
+			"print": {
+				"json":true,
+				"headers":true
+			}
 		},
 		{
-			"command": "bbb",
-			"message": "command bbb",
+			"command": "header",
+			"message": "header sample",
 			"prompts": [
 				{
-					"prompt": "prompt B-1",
-					"json": "b1"
+					"prompt": "header B-1",
+					"header": "b1"
+				},
+				{
+					"prompt": "header B-2",
+					"header": "b2"
 				}
-			]
+			],
+			"print": {
+				"json": true,
+				"headers": true
+			}
 		},
 		{
 			"command": "get",

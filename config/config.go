@@ -18,17 +18,24 @@ type Command struct {
 	Message string   `json: "message"`
 	Prompts []Prompt `json: "prompts"`
 	Api     Api      `json: "api"`
+	Print   Print    `json: "print"`
 }
 
 type Prompt struct {
 	Prompt string `json: "prompt"`
 	Mask   bool   `json: mask`
 	Json   string `json: "json"`
+	Header string `json: "header"`
 }
 
 type Api struct {
 	Method string `json: "method"`
 	Url    string `json: "url"`
+}
+
+type Print struct {
+	Json    bool `json: "json"`
+	Headers bool `json: "headers"`
 }
 
 const (

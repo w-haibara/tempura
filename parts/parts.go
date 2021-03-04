@@ -53,6 +53,8 @@ func Commands(c []config.Command) string {
 		str += "	} else if(command === '" + c[i].Command + "') {\n"
 		str += "		var history = term.history();\n"
 		str += "		history.disable();\n"
+		str += "		var json = ''\n"
+		str += "		var headers = ''\n"
 		for j, _ := range c[i].Prompts {
 			str += "		var var" + strconv.Itoa(j) + ";\n"
 		}
@@ -84,8 +86,14 @@ func Prompts(c config.Command) string {
 		}
 		str += "				var" + strconv.Itoa(j) + " = command;\n"
 		if i == 0 {
-			str += "				var json = " + Json(c.Prompts) + ";\n"
-			str += "				term.echo('input data: ' + json + '\\n');\n"
+			str += "				json = " + Json(c.Prompts) + ";\n"
+			str += "				headers = " + Headers(c.Prompts) + ";\n\n"
+			if c.Print.Json {
+				str += "				term.echo('json: ' + json);\n"
+			}
+			if c.Print.Headers {
+				str += "				term.echo('headers: ' + headers);\n"
+			}
 			if s := Api(c.Api, true); s != "" {
 				str += s
 			} else {
@@ -106,16 +114,37 @@ func Prompts(c config.Command) string {
 }
 
 func Json(p []config.Prompt) string {
+	isEmpty := true
 	str := `'{' + `
 	for i, _ := range p {
+		isEmpty = isEmpty && p[i].Json == ""
 		str += `'"` + p[i].Json + `": ' + `
 		str += `'"' + var` + strconv.Itoa(i) + ` + '"' + `
 		if i != len(p)-1 {
 			str += "',' + "
 		}
 	}
-	str += `'}'`
-	return str
+	if isEmpty {
+		return "''"
+	}
+	return str + `'}'`
+}
+
+func Headers(p []config.Prompt) string {
+	isEmpty := true
+	str := `'{' + `
+	for i, _ := range p {
+		isEmpty = isEmpty && p[i].Header == ""
+		str += `'"` + p[i].Header + `": ' + `
+		str += `'"' + var` + strconv.Itoa(i) + ` + '"' + `
+		if i != len(p)-1 {
+			str += "',' + "
+		}
+	}
+	if isEmpty {
+		return "''"
+	}
+	return str + `'}'`
 }
 
 func Api(a config.Api, pop bool) string {
@@ -132,6 +161,8 @@ func Api(a config.Api, pop bool) string {
 	if a.Method == config.POST || a.Method == config.PUT {
 		str += "					data: json,\n"
 	}
+
+	str += "					headers: headers,\n"
 
 	str += `				}).then(
 					function (data) {
