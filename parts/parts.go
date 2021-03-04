@@ -47,7 +47,13 @@ func Commands(c []config.Command) string {
 			str += "		var var" + strconv.Itoa(j) + ";\n"
 		}
 		str += Message(c[i])
-		str += Prompts(c[i])
+
+		pop := false
+		str += Prompts(c[i], &pop)
+
+		if c[i].Api != (config.Api{}) {
+			str += Api(c[i].Api, pop)
+		}
 	}
 	return str + "	}"
 }
@@ -56,8 +62,13 @@ func Message(c config.Command) string {
 	return "		term.echo('" + c.Message + "');\n"
 }
 
-func Prompts(c config.Command) string {
+func Prompts(c config.Command, pop *bool) string {
 	str := ""
+
+	if len(c.Prompts) >= 2 {
+		*pop = true
+	}
+
 	for i, _ := range c.Prompts {
 		j := len(c.Prompts) - 1 - i
 		str += "		term.push(function(command, term) {\n"
@@ -80,12 +91,87 @@ func Json(p []config.Prompt) string {
 	str := `'{' + `
 	for i, _ := range p {
 		str += `'"` + p[i].Json + `": ' + `
-		str +=  `'"' + var` + strconv.Itoa(i) + ` + '"' + `
-		if (i != len(p) - 1) {
+		str += `'"' + var` + strconv.Itoa(i) + ` + '"' + `
+		if i != len(p)-1 {
 			str += "',' + "
 		}
 	}
 	str += `'}'`
+	return str
+}
+
+func CrossDomain() string {
+	return `
+(function( jQuery ) {
+	if ( window.XDomainRequest ) {
+		jQuery.ajaxTransport(function( s ) {
+			if ( s.crossDomain && s.async ) {
+				if ( s.timeout ) {
+					s.xdrTimeout = s.timeout;
+					delete s.timeout;
+					}
+				var xdr;
+				return {
+					send: function( _, complete ) {
+						function callback( status, statusText, responses, responseHeaders ) {
+							xdr.onload = xdr.onerror = xdr.ontimeout = jQuery.noop;
+							xdr = undefined;
+							complete( status, statusText, responses, responseHeaders );
+							}
+						xdr = new XDomainRequest();
+						xdr.onload = function() {
+							callback( 200, "OK", { text: xdr.responseText }, "Content-Type: " + xdr.contentType );
+						};
+						xdr.onerror = function() {
+								callback( 404, "Not Found" );
+						};
+						xdr.onprogress = jQuery.noop;
+							xdr.ontimeout = function() {
+							callback( 0, "timeout" );
+						};
+						xdr.timeout = s.xdrTimeout || Number.MAX_VALUE;
+						xdr.open( s.type, s.url );
+						xdr.send( ( s.hasContent && s.data ) || null );
+					},
+					abort: function() {
+						if ( xdr ) {
+							xdr.onerror = jQuery.noop;
+							xdr.abort();
+						}
+					}
+				};
+			}
+		});
+	}
+})( jQuery );
+`
+}
+
+func Api(a config.Api, pop bool) string {
+	str := "		term.pause();"
+	str += "		var popFlag = false;"
+	str += "		$.ajax({\n"
+	str += "			type: '" + a.Method + "',\n"
+	str += "			url: '" + a.Url + "'\n"
+	str += `
+		}).then(
+			function (data) {
+				term.echo(JSON.stringify(data, null, 2));
+			},
+			function (jqXHR, textStatus, errorThrown) {
+				term.echo(jqXHR.status+" : "+jqXHR.responseText);
+			}
+		).then(
+			function () {
+				term.resume();
+`
+	if pop {
+		str += "				term.pop();\n"
+	}
+	str += `
+			}
+		);
+`
 	return str
 }
 

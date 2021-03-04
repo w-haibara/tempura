@@ -17,11 +17,17 @@ type Command struct {
 	Command string   `json: "command"`
 	Message string   `json: "message"`
 	Prompts []Prompt `json: "prompts"`
+	Api     Api      `json: "api"`
 }
 
 type Prompt struct {
 	Prompt string `json: "prompt"`
 	Json   string `json: "json"`
+}
+
+type Api struct {
+	Method string `json: "method"`
+	Url    string `json: "url"`
 }
 
 func Configure(data []byte) (Config, error) {

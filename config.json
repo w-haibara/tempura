@@ -5,7 +5,7 @@
 		"--color: #B2EBF2;",
 		"--background: #212121;",
 		"--animation: terminal-underline;",
-		"--size: 3;"
+		"--size: 2;"
 	],
 	"commands": [
 		{
@@ -31,6 +31,14 @@
 					"json": "b1"
 				}
 			]
+		},
+		{
+			"command": "get",
+			"message": "get sample",
+			"api": {
+				"method": "GET",
+				"url": "http://www.boredapi.com/api/activity/"
+			}
 		}
 	]
 }
