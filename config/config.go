@@ -30,6 +30,13 @@ type Api struct {
 	Url    string `json: "url"`
 }
 
+const (
+	GET    string = "GET"
+	POST   string = "POST"
+	PUT    string = "PUT"
+	DELETE string = "DELETE"
+)
+
 func Configure(data []byte) (Config, error) {
 	c := Config{}
 

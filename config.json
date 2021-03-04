@@ -39,6 +39,24 @@
 				"method": "GET",
 				"url": "http://www.boredapi.com/api/activity/"
 			}
+		},
+		{
+			"command": "post",
+			"message": "post sample",
+			"prompts": [
+				{
+					"prompt": "prompt 1",
+					"json": "111"
+				},
+				{
+					"prompt": "prompt 2",
+					"json": "222"
+				}
+			],
+			"api": {
+				"method": "POST",
+				"url": "https://script.google.com/macros/s/AKfycbz4YEgMX0szq6hXInKqn5J1Ipjj7OTWIoHojin7CAAX_oAkSqOOu3dlvX5jMrhQNBLx/exec"
+			}
 		}
 	]
 }

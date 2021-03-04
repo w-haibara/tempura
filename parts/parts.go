@@ -31,12 +31,13 @@ func Style(strs []string) string {
 }
 
 func Header2() string {
-	return `
+	str := `
 </head>
 <body>
-<script>
-$('body').terminal(function(command, term) {
-`
+<script>`
+//	str += CrossDomain()
+	str += "$('body').terminal(function(command, term) {\n"
+	return str
 }
 
 func Commands(c []config.Command) string {
@@ -47,27 +48,23 @@ func Commands(c []config.Command) string {
 			str += "		var var" + strconv.Itoa(j) + ";\n"
 		}
 		str += Message(c[i])
-
-		pop := false
-		str += Prompts(c[i], &pop)
-
-		if c[i].Api != (config.Api{}) {
-			str += Api(c[i].Api, pop)
-		}
+		str += Prompts(c[i])
 	}
 	return str + "	}"
 }
 
 func Message(c config.Command) string {
-	return "		term.echo('" + c.Message + "');\n"
+	return "		term.echo('" + c.Message + "' + '\\n');\n"
 }
 
-func Prompts(c config.Command, pop *bool) string {
+func Prompts(c config.Command) string {
+	if len(c.Prompts) == 0 {
+		return Api(c.Api, false)
+	}
+
 	str := ""
 
-	if len(c.Prompts) >= 2 {
-		*pop = true
-	}
+	pop := len(c.Prompts) >= 2
 
 	for i, _ := range c.Prompts {
 		j := len(c.Prompts) - 1 - i
@@ -76,9 +73,11 @@ func Prompts(c config.Command, pop *bool) string {
 		str += "				var" + strconv.Itoa(j) + " = command;\n"
 		if i == 0 {
 			str += "				var json = " + Json(c.Prompts) + ";\n"
-			str += "				term.echo(json);\n"
+			str += "				term.echo('send data: ' + json + '\\n');\n"
+			str += Api(c.Api, pop)
+		} else {
+			str += "				term.pop();\n"
 		}
-		str += "				term.pop();\n"
 		str += "			}\n"
 		str += "		}, {\n"
 		str += "			prompt: '" + c.Prompts[j].Prompt + ": '\n"
@@ -148,29 +147,39 @@ func CrossDomain() string {
 }
 
 func Api(a config.Api, pop bool) string {
-	str := "		term.pause();"
-	str += "		var popFlag = false;"
-	str += "		$.ajax({\n"
-	str += "			type: '" + a.Method + "',\n"
-	str += "			url: '" + a.Url + "'\n"
-	str += `
-		}).then(
-			function (data) {
-				term.echo(JSON.stringify(data, null, 2));
-			},
-			function (jqXHR, textStatus, errorThrown) {
-				term.echo(jqXHR.status+" : "+jqXHR.responseText);
-			}
-		).then(
-			function () {
-				term.resume();
+	if a == (config.Api{}) {
+		return ""
+	}
+
+	str := "				term.pause();\n"
+	str += "				var popFlag = false;\n"
+	str += "				$.ajax({\n"
+	str += "					type: '" + a.Method + "',\n"
+	str += "					url: '" + a.Url + "',\n"
+
+	if a.Method == config.POST || a.Method == config.PUT {
+		str += "					data: json,\n"
+	}
+
+	str += `				}).then(
+					function (data) {
+						console.log(data);
+						term.echo('=== result ===\n' + JSON.stringify(data, null, 2));
+					},
+					function (jqXHR, textStatus, errorThrown) {
+						term.echo("status: " + jqXHR.status + ", " + textStatus);
+						term.echo(errorThrown.name + ": " + errorThrown.message);
+					}
+				).then(
+					function () {
+						term.resume();
 `
 	if pop {
-		str += "				term.pop();\n"
+		str += "						term.pop();\n"
 	}
 	str += `
-			}
-		);
+					}
+				);
 `
 	return str
 }
