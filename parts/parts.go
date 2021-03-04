@@ -39,6 +39,14 @@ func Header2() string {
 	return str
 }
 
+func MsgSuccess(str string) string {
+	return "'[[;#8BC34A;]' + " + str + " + ']'"
+}
+
+func MsgError(str string) string {
+	return "'[[;#F44336;]' + " + str + " + ']'"
+}
+
 func Commands(c []config.Command) string {
 	str := "	if (false) {\n"
 	for i, _ := range c {
@@ -50,7 +58,7 @@ func Commands(c []config.Command) string {
 		str += Prompts(c[i])
 	}
 	str += "	} else if(command !== '') {\n"
-	str += "		 term.echo(command + ': command not found')\n"
+	str += "		 term.echo(" + MsgError("command + ': command not found'") + ")\n"
 	return str + "	}"
 }
 
@@ -118,11 +126,17 @@ func Api(a config.Api, pop bool) string {
 	str += `				}).then(
 					function (data) {
 						console.log(data);
-						term.echo('=== result ===\n' + JSON.stringify(data, null, 2));
-					},
+`
+	str += "						term.echo(" +
+		MsgSuccess("'=== result ===\\n' + JSON.stringify(data, null, 2)") + ");\n"
+	str += `					},
 					function (jqXHR, textStatus, errorThrown) {
-						term.echo("status: " + jqXHR.status + ", " + textStatus);
-						term.echo(errorThrown.name + ": " + errorThrown.message);
+						term.echo(` +
+		MsgError(`"status: " + jqXHR.status + ", " + textStatus`) +
+		`);
+						term.echo(` +
+		MsgError(`errorThrown.name + ": " + errorThrown.message`) +
+		`);
 					}
 				).then(
 					function () {
