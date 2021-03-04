@@ -73,8 +73,6 @@ func Prompts(c config.Command) string {
 
 	str := ""
 
-	pop := len(c.Prompts) >= 2
-
 	for i, _ := range c.Prompts {
 		j := len(c.Prompts) - 1 - i
 		str += "		term.push(function(command, term) {\n"
@@ -82,8 +80,12 @@ func Prompts(c config.Command) string {
 		str += "				var" + strconv.Itoa(j) + " = command;\n"
 		if i == 0 {
 			str += "				var json = " + Json(c.Prompts) + ";\n"
-			str += "				term.echo('send data: ' + json + '\\n');\n"
-			str += Api(c.Api, pop)
+			str += "				term.echo('input data: ' + json + '\\n');\n"
+			if s := Api(c.Api, true); s != "" {
+				str += s
+			} else {
+				str += "				term.pop();\n"
+			}
 		} else {
 			str += "				term.pop();\n"
 		}
