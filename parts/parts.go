@@ -81,13 +81,13 @@ func Prompts(c config.Command) string {
 		j := len(c.Prompts) - 1 - i
 		str += "		term.push(function(command, term) {\n"
 		str += "			if (command) {\n"
-		if i < len(c.Prompts)-1 && c.Prompts[i+1].Mask {
-			str += "				this.set_mask(false);\n"
+		if (i == 0 && c.Prompts[0].Mask) || (i < len(c.Prompts)-1 && c.Prompts[i+1].Mask) {
+			str += "				term.set_mask(false);\n"
 		}
 		str += "				var" + strconv.Itoa(j) + " = command;\n"
 		if i == 0 {
 			str += "				json = " + Json(c.Prompts) + ";\n"
-			str += "				headers = " + Headers(c.Prompts) + ";\n\n"
+			str += "				headers = " + Headers(c.Prompts) + ";\n"
 			if c.Print.Json {
 				str += "				term.echo('json: ' + json);\n"
 			}
@@ -102,14 +102,19 @@ func Prompts(c config.Command) string {
 		} else {
 			str += "				term.pop();\n"
 		}
-		if i < len(c.Prompts) && c.Prompts[i].Mask {
-			str += "				this.set_mask('*');\n"
+		if i != 0 && i < len(c.Prompts) && c.Prompts[i].Mask {
+			str += "				term.set_mask('*');\n"
 		}
 		str += "			}\n"
 		str += "		}, {\n"
 		str += "			prompt: '" + c.Prompts[j].Prompt + ": '\n"
 		str += "		});\n"
 	}
+
+	if c.Prompts[0].Mask {
+		str += "		term.set_mask('*');\n"
+	}
+
 	return str
 }
 

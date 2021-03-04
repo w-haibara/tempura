@@ -45,6 +45,75 @@
 			}
 		},
 		{
+			"command": "mask1",
+			"message": "mask sample 1",
+			"prompts": [
+				{
+					"prompt": "masked",
+					"mask": true,
+					"json": "masked"
+				}
+			],
+			"print": {
+				"json": true
+			}
+		},
+		{
+			"command": "mask2",
+			"message": "mask sample ",
+			"prompts": [
+				{
+					"prompt": "unmasked",
+					"json": "unmasked"
+				},
+				{
+					"prompt": "masked",
+					"mask": true,
+					"json": "masked"
+				}
+			],
+			"print": {
+				"json": true
+			}
+		},
+		{
+			"command": "mask3",
+			"message": "mask sample 3",
+			"prompts": [
+				{
+					"prompt": "masked",
+					"mask": true,
+					"json": "masked"
+				},
+				{
+					"prompt": "unmasked",
+					"json": "unmasked"
+				}
+			],
+			"print": {
+				"json": true
+			}
+		},
+		{
+			"command": "mask4",
+			"message": "mask sample 4",
+			"prompts": [
+				{
+					"prompt": "masked",
+					"mask": true,
+					"json": "masked"
+				},
+				{
+					"prompt": "masked",
+					"mask": true,
+					"json": "masked"
+				}
+			],
+			"print": {
+				"json": true
+			}
+		},
+		{
 			"command": "get",
 			"message": "get sample",
 			"api": {
