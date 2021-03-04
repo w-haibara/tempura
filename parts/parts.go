@@ -165,6 +165,6 @@ func Footer(greeting string) string {
 </script>
 </body>
 </html>
-	`
+`
 	return str1 + greeting + str2
 }
