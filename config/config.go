@@ -22,6 +22,7 @@ type Command struct {
 
 type Prompt struct {
 	Prompt string `json: "prompt"`
+	Mask   bool   `json: mask`
 	Json   string `json: "json"`
 }
 
