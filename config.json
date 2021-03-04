@@ -46,11 +46,11 @@
 			"prompts": [
 				{
 					"prompt": "prompt 1",
-					"json": "111"
+					"json": "tag1"
 				},
 				{
 					"prompt": "prompt 2",
-					"json": "222"
+					"json": "tag2"
 				}
 			],
 			"api": {
