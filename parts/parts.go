@@ -51,6 +51,8 @@ func Commands(c []config.Command) string {
 	str := "	if (false) {\n"
 	for i, _ := range c {
 		str += "	} else if(command === '" + c[i].Command + "') {\n"
+		str += "		var history = term.history();\n"
+		str += "		history.disable();\n"
 		for j, _ := range c[i].Prompts {
 			str += "		var var" + strconv.Itoa(j) + ";\n"
 		}
