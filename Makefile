@@ -4,7 +4,7 @@ tempura: *.go */*.go go.mod
 
 .PHONY: init
 init:
-	go mod init tempura
+	go mod init github.com/w-haibara/tempura
 
 .PHONY: test
 test:

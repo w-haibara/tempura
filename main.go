@@ -5,9 +5,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"tempura/config"
-	"tempura/generate"
-	"tempura/serve"
+
+	"github.com/w-haibara/tempura/config"
+	"github.com/w-haibara/tempura/generate"
+	"github.com/w-haibara/tempura/serve"
 )
 
 var (

@@ -1,11 +1,11 @@
 package generate
 
 import (
-	//	"fmt"
 	"log"
 	"os"
-	"tempura/config"
-	"tempura/parts"
+
+	"github.com/w-haibara/tempura/config"
+	"github.com/w-haibara/tempura/parts"
 )
 
 func Generate(c config.Config) error {

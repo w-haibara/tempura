@@ -3,7 +3,8 @@ package parts
 import (
 	"strconv"
 	"strings"
-	"tempura/config"
+
+	"github.com/w-haibara/tempura/config"
 )
 
 func Header1() string {

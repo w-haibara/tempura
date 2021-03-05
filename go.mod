@@ -1,6 +1,6 @@
-module tempura
+module github.com/w-haibara/tempura
 
-go 1.15
+go 1.16
 
 require (
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
