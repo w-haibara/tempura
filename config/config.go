@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"reflect"
 
 	"github.com/k0kubun/pp"
 )
@@ -35,9 +36,9 @@ type Api struct {
 }
 
 type Print struct {
-	Json    bool `json: "json"`
-	Headers bool `json: "headers"`
-	Query   bool `json: "query"`
+	Json   bool `json: "json"`
+	Header bool `json: "header"`
+	Query  bool `json: "query"`
 }
 
 const (
@@ -58,4 +59,12 @@ func Configure(data []byte) (Config, error) {
 	pp.Println(c)
 
 	return c, nil
+}
+
+func IsEmpty(p []Prompt, fname string) bool {
+	isEmpty := true
+	for i, _ := range p {
+		isEmpty = isEmpty && (reflect.ValueOf(p[i]).FieldByName(fname).String() == "")
+	}
+	return isEmpty
 }

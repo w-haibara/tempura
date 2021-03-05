@@ -54,7 +54,7 @@ func Commands(c []config.Command) string {
 		str += "		var history = term.history();\n"
 		str += "		history.disable();\n"
 		str += "		var json = ''\n"
-		str += "		var headers = ''\n"
+		str += "		var header = ''\n"
 		str += "		var query = ''\n"
 		for j, _ := range c[i].Prompts {
 			str += "		var var" + strconv.Itoa(j) + ";\n"
@@ -87,17 +87,15 @@ func Prompts(c config.Command) string {
 		}
 		str += "				var" + strconv.Itoa(j) + " = command;\n"
 		if i == 0 {
-			str += "				json = " + Json(c.Prompts) + ";\n"
-			str += "				headers = " + Headers(c.Prompts) + ";\n"
-			str += "				query = " + Query(c.Prompts) + ";\n"
+			str += InitializationOfObjects(c.Prompts)
 			if c.Print.Json {
-				str += "				term.echo('json: ' + json);\n"
+				str += "				term.echo('json: ' + JSON.stringify(json, undefined, 2));\n"
 			}
-			if c.Print.Headers {
-				str += "				term.echo('headers: ' + headers);\n"
+			if c.Print.Header {
+				str += "				term.echo('header: ' + JSON.stringify(header, undefined, 2));\n"
 			}
 			if c.Print.Query {
-				str += "				term.echo('query: ' + query);\n"
+				str += "				term.echo('query: ' + JSON.stringify(query, undefined, 2));\n"
 			}
 			if s := Api(c.Api, true); s != "" {
 				str += s
@@ -123,55 +121,57 @@ func Prompts(c config.Command) string {
 	return str
 }
 
-func Json(p []config.Prompt) string {
-	isEmpty := true
-	str := `'{' + `
-	for i, _ := range p {
-		isEmpty = isEmpty && p[i].Json == ""
-		str += `'"` + p[i].Json + `": ' + `
-		str += `'"' + var` + strconv.Itoa(i) + ` + '"' + `
-		if i != len(p)-1 {
-			str += "',' + "
-		}
+func InitializationOfObjects(p []config.Prompt) string {
+	str := ""
+	if !config.IsEmpty(p, "Json") {
+		str += "				json = " + Json(p) + ";\n"
 	}
-	if isEmpty {
-		return "''"
+	if !config.IsEmpty(p, "Header") {
+		str += "				header = " + Header(p) + ";\n"
 	}
-	return str + `'}'`
+	if !config.IsEmpty(p, "Query") {
+		str += "				query = " + Query(p) + ";\n"
+	}
+	return str
 }
 
-func Headers(p []config.Prompt) string {
-	isEmpty := true
-	str := `'{' + `
+func Json(p []config.Prompt) string {
+	str := ""
 	for i, _ := range p {
-		isEmpty = isEmpty && p[i].Header == ""
-		str += `'"` + p[i].Header + `": ' + `
-		str += `'"' + var` + strconv.Itoa(i) + ` + '"' + `
-		if i != len(p)-1 {
-			str += "',' + "
-		}
+		str += ToObject(i, len(p), p[i].Json)
 	}
-	if isEmpty {
-		return "''"
+	return str
+}
+
+func Header(p []config.Prompt) string {
+	str := ""
+	for i, _ := range p {
+		str += ToObject(i, len(p), p[i].Header)
 	}
-	return str + `'}'`
+	return str
 }
 
 func Query(p []config.Prompt) string {
-	isEmpty := true
-	str := `'{' + `
+	str := ""
 	for i, _ := range p {
-		isEmpty = isEmpty && p[i].Query == ""
-		str += `'"` + p[i].Query + `": ' + `
-		str += `'"' + var` + strconv.Itoa(i) + ` + '"' + `
-		if i != len(p)-1 {
-			str += "',' + "
-		}
+		str += ToObject(i, len(p), p[i].Query)
 	}
-	if isEmpty {
-		return "''"
+	return str
+}
+
+func ToObject(i int, length int, v string) string {
+	str := ""
+	if i == 0 {
+		str += `{`
 	}
-	return str + `'}'`
+	str += `"` + v + `": `
+	str += `var` + strconv.Itoa(i) + ``
+	if i != length-1 {
+		str += ", "
+	} else {
+		str += `}`
+	}
+	return str
 }
 
 func Api(a config.Api, pop bool) string {
@@ -181,19 +181,22 @@ func Api(a config.Api, pop bool) string {
 
 	str := "				term.pause();\n"
 	str += "				var popFlag = false;\n"
+
 	str += "				$.ajax({\n"
 	str += "					type: '" + a.Method + "',\n"
 	str += "					url: '" + a.Url + "',\n"
+	str += "					crossDomain: true,\n"
 
 	if a.Method == config.POST || a.Method == config.PUT {
 		str += "					data: json,\n"
 	}
 
-	str += "					headers: headers,\n"
-
 	str += `				}).then(
 					function (data) {
 						console.log(data);
+						if (typeof data == 'string') {
+							data = JSON.parse(data);
+						}
 `
 	str += "						term.echo(" +
 		MsgSuccess("'=== result ===\\n' + JSON.stringify(data, null, 2)") + ");\n"

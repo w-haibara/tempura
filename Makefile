@@ -10,3 +10,16 @@ init:
 test:
 	gofmt -w *.go
 	go test
+
+.PHONY: docker-run
+docker-run:
+	docker rm -f tempura
+	docker build \
+		-f Dockerfile \
+		--target tempura-builder \
+		./ -t tempura
+	docker run -itd \
+		--restart=always \
+		--network proxy \
+		--name tempura tempura \
+		/tempura/tempura --serve 8080

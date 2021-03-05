@@ -23,7 +23,7 @@
 			],
 			"print": {
 				"json":true,
-				"headers":true,
+				"header":true,
 				"query": true
 			}
 		},
@@ -42,7 +42,7 @@
 			],
 			"print": {
 				"json": true,
-				"headers": true,
+				"header": true,
 				"query": true
 			}
 		},
@@ -61,7 +61,7 @@
 			],
 			"print": {
 				"json": true,
-				"headers": true,
+				"header": true,
 				"query": true
 			}
 		},
@@ -139,7 +139,7 @@
 			"message": "get sample",
 			"api": {
 				"method": "GET",
-				"url": "http://www.boredapi.com/api/activity/"
+				"url": "https://www.boredapi.com/api/activity/"
 			}
 		},
 		{
