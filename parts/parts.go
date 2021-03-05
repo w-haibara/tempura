@@ -12,8 +12,9 @@ func Header1() string {
 <html>
 <head>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://unpkg.com/jquery.terminal@2.x.x/js/jquery.terminal.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/jquery.terminal@2.x.x/css/jquery.terminal.min.css"/>
+<script src="https://cdn.jsdelivr.net/gh/jcubic/static/js/wcwidth.js"></script>
+<script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.js"></script>
+<link href="https://unpkg.com/jquery.terminal/css/jquery.terminal.css" rel="stylesheet"/>
 `
 }
 
@@ -40,12 +41,16 @@ func Header2() string {
 	return str
 }
 
+func FormattedString(str, option string) string {
+	return "'[[" + option + "]' + (" + str + ").replace(/&/g, '&amp;').replace(/\\[/g, '&#91;').replace(/\\]/g, '&#93;') + ']'"
+}
+
 func MsgSuccess(str string) string {
-	return "'[[;#8BC34A;]' + " + str + " + ']'"
+	return FormattedString(str, ";#8BC34A;")
 }
 
 func MsgError(str string) string {
-	return "'[[;#F44336;]' + " + str + " + ']'"
+	return FormattedString(str, ";#F44336;")
 }
 
 func Commands(c []config.Command) string {
@@ -63,8 +68,11 @@ func Commands(c []config.Command) string {
 		str += Message(c[i])
 		str += Prompts(c[i])
 	}
+	str += "	} else if(command.startsWith('echo')) {\n"
+	str += "		term.echo(command.replace(/^echo/, '').trimStart());\n"
 	str += "	} else if(command !== '') {\n"
-	str += "		 term.echo(" + MsgError("command + ': command not found'") + ")\n"
+	str += "		term.echo(" + MsgError("command + ': command not found'") + ");\n"
+	str += "		console.log(" + MsgError("command + ': command not found'") + ");\n"
 	return str + "	}"
 }
 
@@ -186,7 +194,6 @@ func Api(p []config.Prompt, a config.Api, pop bool) string {
 
 	str += `				}).then(
 					function (data) {
-						console.log(data);
 						if (typeof data == 'string') {
 							data = JSON.parse(data);
 						}
