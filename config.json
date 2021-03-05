@@ -143,21 +143,72 @@
 			}
 		},
 		{
-			"command": "post",
-			"message": "post sample",
+			"command": "post-json",
+			"message": "post json sample",
 			"prompts": [
 				{
-					"prompt": "prompt 1",
-					"json": "tag1"
+					"prompt": "json field 1",
+					"json": "field1"
 				},
 				{
-					"prompt": "prompt 2",
-					"json": "tag2"
+					"prompt": "json field 2",
+					"json": "field2"
 				}
 			],
+			"print": {
+				"json": true
+			},
 			"api": {
 				"method": "POST",
-				"url": "https://script.google.com/macros/s/AKfycbz4YEgMX0szq6hXInKqn5J1Ipjj7OTWIoHojin7CAAX_oAkSqOOu3dlvX5jMrhQNBLx/exec"
+				"url": "https://w-haibara.com/sample-api/json"
+			}
+		},
+		{
+			"command": "post-header",
+			"message": "post with header sample",
+			"prompts": [
+				{
+					"prompt": "json field",
+					"json": "field"
+				},
+				{
+					"prompt": "header",
+					"header": "X-My-Header"
+				}
+			],
+			"print": {
+				"json": true,
+				"header": true
+			},
+			"api": {
+				"method": "POST",
+				"url": "https://w-haibara.com/sample-api/header"
+			}
+		},
+		{
+			"command": "post-query",
+			"message": "post with query sample",
+			"prompts": [
+				{
+					"prompt": "json field",
+					"json": "field"
+				},
+				{
+					"prompt": "query1",
+					"query": "q1"
+				},
+				{
+					"prompt": "query2",
+					"query": "q2"
+				}
+			],
+			"print": {
+				"json": true,
+				"query": true
+			},
+			"api": {
+				"method": "POST",
+				"url": "https://w-haibara.com/sample-api/query"
 			}
 		}
 	]

@@ -2,6 +2,7 @@ package parts
 
 import (
 	"strconv"
+	"strings"
 	"tempura/config"
 )
 
@@ -68,12 +69,12 @@ func Commands(c []config.Command) string {
 }
 
 func Message(c config.Command) string {
-	return "		term.echo('" + c.Message + "' + '\\n');\n"
+	return "		term.echo('" + c.Message + "');\n"
 }
 
 func Prompts(c config.Command) string {
 	if len(c.Prompts) == 0 {
-		return Api(c.Api, false)
+		return Api(nil, c.Api, false)
 	}
 
 	str := ""
@@ -89,15 +90,15 @@ func Prompts(c config.Command) string {
 		if i == 0 {
 			str += InitializationOfObjects(c.Prompts)
 			if c.Print.Json {
-				str += "				term.echo('json: ' + JSON.stringify(json, undefined, 2));\n"
+				str += "				term.echo('\\njson: ' + JSON.stringify(json, undefined, 2));\n"
 			}
 			if c.Print.Header {
-				str += "				term.echo('header: ' + JSON.stringify(header, undefined, 2));\n"
+				str += "				term.echo('\\nheader: ' + JSON.stringify(header, undefined, 2));\n"
 			}
 			if c.Print.Query {
-				str += "				term.echo('query: ' + JSON.stringify(query, undefined, 2));\n"
+				str += "				term.echo('\\nquery: ' + JSON.stringify(query, undefined, 2));\n"
 			}
-			if s := Api(c.Api, true); s != "" {
+			if s := Api(c.Prompts, c.Api, true); s != "" {
 				str += s
 			} else {
 				str += "				term.pop();\n"
@@ -122,59 +123,42 @@ func Prompts(c config.Command) string {
 }
 
 func InitializationOfObjects(p []config.Prompt) string {
+	jsonStr := ""
+	headerStr := ""
+	queryStr := ""
+	for i, _ := range p {
+		jsonStr += ToObjectOneByOne(i, len(p), p[i].Json)
+		headerStr += ToObjectOneByOne(i, len(p), p[i].Header)
+		queryStr += ToObjectOneByOne(i, len(p), p[i].Query)
+	}
+
+	jsonStr = "{" + strings.TrimSuffix(jsonStr, ",") + "}"
+	headerStr = "{" + strings.TrimSuffix(headerStr, ",") + "}"
+	queryStr = "{" + strings.TrimSuffix(queryStr, ",") + "}"
+
 	str := ""
 	if !config.IsEmpty(p, "Json") {
-		str += "				json = " + Json(p) + ";\n"
+		str += "				json = " + jsonStr + ";\n"
 	}
 	if !config.IsEmpty(p, "Header") {
-		str += "				header = " + Header(p) + ";\n"
+		str += "				header = " + headerStr + ";\n"
 	}
 	if !config.IsEmpty(p, "Query") {
-		str += "				query = " + Query(p) + ";\n"
+		str += "				query = " + queryStr + ";\n"
 	}
 	return str
 }
 
-func Json(p []config.Prompt) string {
+func ToObjectOneByOne(i int, length int, v string) string {
 	str := ""
-	for i, _ := range p {
-		str += ToObject(i, len(p), p[i].Json)
+	if v != "" {
+		str += `"` + v + `": `
+		str += `var` + strconv.Itoa(i) + `,`
 	}
 	return str
 }
 
-func Header(p []config.Prompt) string {
-	str := ""
-	for i, _ := range p {
-		str += ToObject(i, len(p), p[i].Header)
-	}
-	return str
-}
-
-func Query(p []config.Prompt) string {
-	str := ""
-	for i, _ := range p {
-		str += ToObject(i, len(p), p[i].Query)
-	}
-	return str
-}
-
-func ToObject(i int, length int, v string) string {
-	str := ""
-	if i == 0 {
-		str += `{`
-	}
-	str += `"` + v + `": `
-	str += `var` + strconv.Itoa(i) + ``
-	if i != length-1 {
-		str += ", "
-	} else {
-		str += `}`
-	}
-	return str
-}
-
-func Api(a config.Api, pop bool) string {
+func Api(p []config.Prompt, a config.Api, pop bool) string {
 	if a == (config.Api{}) {
 		return ""
 	}
@@ -187,8 +171,13 @@ func Api(a config.Api, pop bool) string {
 	str += "					url: '" + a.Url + "',\n"
 	str += "					crossDomain: true,\n"
 
-	if a.Method == config.POST || a.Method == config.PUT {
-		str += "					data: json,\n"
+	if !config.IsEmpty(p, "Json") && (a.Method == config.POST || a.Method == config.PUT) {
+		str += "					data: JSON.stringify(json, undefined),\n"
+		str += "					dataType: 'json',\n"
+		str += "					contentType: 'application/json',\n"
+	}
+	if !config.IsEmpty(p, "Header") {
+		str += "					headers: header\n"
 	}
 
 	str += `				}).then(
@@ -199,7 +188,7 @@ func Api(a config.Api, pop bool) string {
 						}
 `
 	str += "						term.echo(" +
-		MsgSuccess("'=== result ===\\n' + JSON.stringify(data, null, 2)") + ");\n"
+		MsgSuccess("'\\n=== result ===\\n' + JSON.stringify(data, null, 2)") + ");\n"
 	str += `					},
 					function (jqXHR, textStatus, errorThrown) {
 						term.echo(` +
