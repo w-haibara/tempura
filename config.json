@@ -23,7 +23,8 @@
 			],
 			"print": {
 				"json":true,
-				"headers":true
+				"headers":true,
+				"query": true
 			}
 		},
 		{
@@ -41,7 +42,27 @@
 			],
 			"print": {
 				"json": true,
-				"headers": true
+				"headers": true,
+				"query": true
+			}
+		},
+		{
+			"command": "query",
+			"message": "query sample",
+			"prompts": [
+				{
+					"prompt": "query C-1",
+					"query": "c1"
+				},
+				{
+					"prompt": "query C-2",
+					"query": "c2"
+				}
+			],
+			"print": {
+				"json": true,
+				"headers": true,
+				"query": true
 			}
 		},
 		{

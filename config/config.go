@@ -26,6 +26,7 @@ type Prompt struct {
 	Mask   bool   `json: mask`
 	Json   string `json: "json"`
 	Header string `json: "header"`
+	Query  string `json: "query"`
 }
 
 type Api struct {
@@ -36,6 +37,7 @@ type Api struct {
 type Print struct {
 	Json    bool `json: "json"`
 	Headers bool `json: "headers"`
+	Query   bool `json: "query"`
 }
 
 const (

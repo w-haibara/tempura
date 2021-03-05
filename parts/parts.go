@@ -55,6 +55,7 @@ func Commands(c []config.Command) string {
 		str += "		history.disable();\n"
 		str += "		var json = ''\n"
 		str += "		var headers = ''\n"
+		str += "		var query = ''\n"
 		for j, _ := range c[i].Prompts {
 			str += "		var var" + strconv.Itoa(j) + ";\n"
 		}
@@ -88,11 +89,15 @@ func Prompts(c config.Command) string {
 		if i == 0 {
 			str += "				json = " + Json(c.Prompts) + ";\n"
 			str += "				headers = " + Headers(c.Prompts) + ";\n"
+			str += "				query = " + Query(c.Prompts) + ";\n"
 			if c.Print.Json {
 				str += "				term.echo('json: ' + json);\n"
 			}
 			if c.Print.Headers {
 				str += "				term.echo('headers: ' + headers);\n"
+			}
+			if c.Print.Query {
+				str += "				term.echo('query: ' + query);\n"
 			}
 			if s := Api(c.Api, true); s != "" {
 				str += s
@@ -141,6 +146,23 @@ func Headers(p []config.Prompt) string {
 	for i, _ := range p {
 		isEmpty = isEmpty && p[i].Header == ""
 		str += `'"` + p[i].Header + `": ' + `
+		str += `'"' + var` + strconv.Itoa(i) + ` + '"' + `
+		if i != len(p)-1 {
+			str += "',' + "
+		}
+	}
+	if isEmpty {
+		return "''"
+	}
+	return str + `'}'`
+}
+
+func Query(p []config.Prompt) string {
+	isEmpty := true
+	str := `'{' + `
+	for i, _ := range p {
+		isEmpty = isEmpty && p[i].Query == ""
+		str += `'"` + p[i].Query + `": ' + `
 		str += `'"' + var` + strconv.Itoa(i) + ` + '"' + `
 		if i != len(p)-1 {
 			str += "',' + "
