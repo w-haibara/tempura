@@ -168,7 +168,11 @@ func Api(p []config.Prompt, a config.Api, pop bool) string {
 
 	str += "				$.ajax({\n"
 	str += "					type: '" + a.Method + "',\n"
-	str += "					url: '" + a.Url + "',\n"
+	if !config.IsEmpty(p, "Query") {
+		str += "					url: '" + a.Url + "?' + jQuery.param(query)" + ",\n"
+	} else {
+		str += "					url: '" + a.Url + "',\n"
+	}
 	str += "					crossDomain: true,\n"
 
 	if !config.IsEmpty(p, "Json") && (a.Method == config.POST || a.Method == config.PUT) {
